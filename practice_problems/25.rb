@@ -22,3 +22,4 @@ p bob.get_name
 
 # What does the above code demonstrate about how instance variables are scoped?
 
+# This code demonstrates that instance variables are scoped at the level of the object and are not accessible by other objects directly.
