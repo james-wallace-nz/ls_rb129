@@ -31,7 +31,7 @@ class Animal
 end
 
 module GoodAnimals
-  include climbable
+  include Climbable
 
   class GoodDog < Animal
     include Swimmable
@@ -46,3 +46,14 @@ p good_dog.walk
 
 # What is the method lookup path used when invoking `#walk` on `good_dog`?
 
+# GoodAnimals::GoodDog
+# Danceable
+# Swimmable
+# Animal
+# Walkable
+# Object
+# Kernel
+# BasicObject
+
+puts GoodAnimals::GoodDog.ancestors
+# p good_dog.climb
