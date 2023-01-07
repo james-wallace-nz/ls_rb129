@@ -3,119 +3,278 @@
 
  1. What is OOP? 
 
+    Object Oriented Programming (OOP) is a method of programming that attempts to model and simplify real world objects and the interaction between them. Classes create a template for a type of object, and instances of that class are created to represent individual objects of that type. **[update]**
 
   b. Why is it important?
 
+    OOP is important because **[update]**
 
   c. List all the benefits of OOP?
+
+    The benefits of OOP include:
+    - **[update]**
 
 
  2. What is encapsulation? 
 
+    Encapsulation is the ability to expose a public interface to interact with objects of a class while hiding the implementation details. **[update]**
 
   b. How is this achieved in Ruby?
+
+    Encapsulation is achieved through method access control using the `public`, `protected`, and `private` methods in the class definition. Instance methods defined below each of these methods are available either publicly, only to other instances of the same class, or only to an object's own instance methods, respectively. **[update]**
 
 
  3. How does encapsulation relate to the public interface of a class?
 
+    Public instance methods in a class are available to the rest of the program. These methods provide a public interface to interact with objects of a class. **[update]**
+
+    Protected instance methods in a class are only available to be invoked on other instances of the same class, within the class definition. They are not available as a public interface to the rest of the program. **[update]**
+
 
  4. What is an class? What is an object? What is a module?
+
+    A class is a template for creating objects that have different states but the same behaviours. **[update]**
+
+    An object is an instance of a class. It has its own states but the same behaviours has other instances of the same class. **[update]**
+
+    A module is a way to wrap up code that we want to `include` in classes as a mixin, or a way to separate class and module definitions from other parts of our code by using it as a namespace. **[update]**
 
 
  5. What are the differences between classes and modules? How do you decide which to use?
 
+    A class is a template for instantiating objects. It also has its own class variables and class methods. **[update]**
+
+    A module can define constants and instance methods, but can only be included into a class definition to use them. A module cannot instantiate an object. **[update]**
+
 
  6. What is instantiation? Provide an example.
+
+    Instantiation means creating a new object from a class. **[update]**
+
+    `Example.new`
 
 
  7. What is polymorphism? 
 
+    Polymorphism means being able to interact with different objects using the same method invocation. **[update]**
+
 
  8. Explain two different ways to apply polymorphism in Ruby?
+
+    The two ways to apply polymorphism are: **[update]**
+    - Inheritance: sub-classes inherit instance methods from super-classes. Sub-classes may override the implementation of the super-class instance method so that objects instantiated from the sub-class has different behaviour for the same method call. 
+    - Duck Typing: Providing objects of different classes with an instance method of the same name, but having different implementations in those instance methods. If the object responds to the method invocation, it can be invoked. 
 
 
  9. How does polymorphism work in relation to the public interface?
 
+    Polymorphism relies on objects having a public interface of methods to invoke. **[update]**
+
 
 10. What is duck typing?
 
+    Duck typing is providing objects of different classes with an instance method of the same name, but having different implementations for those instance methods. If an object responds to a method invocation, it can be invoked. **[update]**
 
   b. How does it relate to polymorphism?
 
+    Duck typing relates to polymorphism because we can treat objects of different classes the same way **[update]**
 
   c. What problem does it solve?
+
+    Duck typing solves the problem of having to specify the method to invoke for each individual type of object that may be interacted with. With duck typing, we can invoke just one method and each object will behave in its own pre-defined way. **[update]**
 
 
 11. What is inheritance?
 
+    Inheritance is allowing sub-classes of a super-class to have access to all of the super-class class and instance methods and variables. Interface inheritance is the ability to mixin a module so that a class inherits the instance methods and variables defined in that module. **[update]**
 
   b. What is class inheritance? How does this work in Ruby?
+
+    Class inheritance is where a sub-class inherits all of a super-class' class and instance methods and variables. This works by defining a class as sub-class of a super-class: **[update]**
+
+    `class SubClass < SuperClass; end`
 
 
 12. What is the difference between a superclass and a sub-class?
 
+    A super-class is a parent class. A sub-class inherits from a parent class of all of the parent's class and instance methods and variables. The sub-class may then override these with its own class and instance methods and variables with the same names. **[update]**
+
 
 13. What is a module? What is its purpose? How do we use them with our classes?
+
+    A module is... **[update]**
+
+    We include them in a class as a mixin module by using the `include` **[method?]** with the module name.
 
 
   b. Create a module for the class you created above and include it properly. 
 
+    ``` ruby
+    module ExampleModule
+    end
+
+    class ExampleClass
+      include ExampleModule
+    end
+
+    ```
 
 14. What is a mixin?
 
+    **[update]**
 
 15. When is it good to use inheritance?
 
+    It is good to use inheritance when there is a clear hierachical structure to classes and we intend to allow super-class class and instance methods and variables to be inherited by sub-classes. This avoids repeition in our code and means we can change the definition of class and instance methods and variables in one place. It also allows us to override class and instance methods and variables in a sub-class when we want a different implementation. 
 
 16. In inheritance, when would it be good to override a method?
 
+    It is good to override a method when a sub-class requires a different implementation to the parent class definition. **[update]**
 
 17. What is the method lookup path? How is it important?
 
+    The method lookup path is how Ruby finds an instance method when invoked on an object. Ruby looks in the class for the object that the method was invoked on. If it doesn't find the method, it will look in any included modules. If Ruby still doesn't find the method, it will look in the class' parent class, and then included modules, all the way up to the Object class, Kernel module then Basic Object class. 
+    
+    When a method with that name is found, Ruby will execute it. If no method is found, Ruby will raise a NoMethodError. 
+
+    The method lookup path is important becuase it determines which definition of a method Ruby will execute when a method is invoked. **[update]**
 
 18. When defining a class, we usually focus on state and behaviors. What is the difference between these two concepts?
 
 
+
 19. How do you initialize a new object?
+
+    We initialize a new object with `ClassName.new`
 
 
 20. What is a constructor method? Provide an example.
 
+    A constructor method is a method that is invoked only when a new instance of a class is intantiated. In Ruby, the constructor method is called `initialize`. **[update]**
+
+    ``` ruby
+      class ExampleClass
+        def initialize(name)
+          @name = name
+        end
+      end
+
+      new_example = ExampleClass.new('new example')
+    ```
+
 
 21. What is an instance variable, and how is it related to an object? Provide an example.
+
+    An instance variable is... **[update]**
+
+    ``` ruby
+      class ExampleClass
+        def initialize(name)
+          @name = name
+        end
+      end
+
+      new_example = ExampleClass.new('new example')
+      # @name is an instance variable
+    ```
 
 
 22. What is an instance method? Provide an example.
 
+    An instance method is... **[update]**
+
 
 23. How do objects encapsulate state?
+
+    Objects encapsulate state by... **[update]**
 
 
 24. What is the difference between classes and objects?
 
+    A class is a template for creating objects instances. Objects are instances of a class. **[update]**
+
 
 25. How can we expose information about the state of the object using instance methods?
+
+    We can expose information about the state of an object by providing a getter instance method for the instnace variable. **[update]**
 
 
 26. What is a collaborator object, and what is the purpose of using collaborator objects in OOP?
 
+    A collaborator object, is an object that is stored in an instance variable of another class. **[update]**
+
+    We use collaborator objects in OOP to... **[update]**
+
 
 27. What is an accessor method? Provide an example.
+  
+    An accessor method is... **[update]**
 
+    ``` ruby
+      class ExampleClass
+        attr_accessor :name
+        attr_reader :age
+        attr_writer :id
+      end
+    ```
 
 28. What is a getter method? Provide an example.
+
+    A getter method is... **[update]**
+
+    ``` ruby
+      class ExampleClass
+        def initialize(name)
+          @name = name
+        end
+
+        def name
+          @name
+        end
+      end
+
+      new_example = ExampleClass.new('new example')
+      puts new_example.name
+    ```
 
 
 29. What is a setter method? Provide an example.
 
+    A setter method is... **[update]**
+
+    ``` ruby
+      class ExampleClass
+        def initialize(name)
+          @name = name
+        end
+
+        def name=(new_name)
+          @name = new_name
+        end
+      end
+
+      new_example = ExampleClass.new('new example')
+      new_example.name = 'new name'
+    ```
+
 
 30. What is `attr_accessor`? Provide an example.
+
+    `attr_accessor` is the combination of `attr_reader`, which provides getter methods, and `attr_writer`, which provides setter methods. `attr_accessor` provides both getter and setter methods for instance variables provided as symbols.
+
+    ``` ruby
+      class ExampleClass
+        attr_accessor :name
+      end
+    ```
 
 
 31. How do you decide whether to reference an instance variable or a getter method?
 
+    
 
-32. 
+
+32. Why does the `.change_info` method not work as expected here?
 
 ``` ruby
 class GoodDog
@@ -147,10 +306,14 @@ puts sparky.info
 # => Sparky weighs 10 lbs and is 12 inches tall.
 ```
 
-Why does the `.change_info` method not work as expected here?
+    Inside the instance method definition for `change_info`, local variables, `name`, `height`, and `weight` are initialized and assigned the values of `n`, `h`, and `w`, respectively. `change_info` does not reassign the instance variables `@name`, `@height`, and `@weight`, so `puts sparky.info` is unchanged by `sparky.change_info('Spartacus', '24 inches', '45 lbs')`. 
+
+    To fix this we need to add `self.` in front of `name`, `height`, and `weight` inside `change_info`, or refer to the instance variables directly with `@` in front of `name`, `height`, and `weight`.
 
 
 33. When would you call a method with `self`?
+
+    
 
 
 34. What are class methods? Provide an example.
@@ -613,7 +776,7 @@ Identify all custom defined objects that act as collaborator objects within the 
 93. What do you get “for free” when you define a `==`` method?
 
 
-94. 
+94. What will the code below return and why?
 
 ``` ruby
 arr1 = [1, 2, 3]
@@ -629,7 +792,9 @@ int2 = 5
 int1.object_id == int2.object_id      # => ??
 ```
 
-What will the code above return and why?
+
+
+
 
 
 95. What is the `===`` method?
