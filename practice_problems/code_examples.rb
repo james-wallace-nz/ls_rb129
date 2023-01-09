@@ -17,15 +17,19 @@ example1 = Example1.new
 
 string1 = 'a'
 string2 = 'a'
-p string1.object_id   # 2470591260
-p string2.object_id   # 2470591240
+p string1.object_id
+# 2470591260
+p string2.object_id
+# 2470591240
 
 # ----------------------------------
 # Classes
 # ----------------------------------
 
-p 'string'.class      # String
-p 1.class             # Integer
+p 'string'.class
+# String
+p 1.class
+# Integer
 
 # ----------------------------------
 # Object Instantiation
@@ -175,29 +179,88 @@ puts example11.id
 # Protected
 # ----------------------------------
 
-
-# **Update**
-
-
-class Example12
-
-  def initialize(name, id)
-
+class BankAccount
+  def initialize(name, password)
+    @name = name
+    @password = password
+    @balance = 0
   end
 
   public
 
+  attr_accessor :name
+
+  def deposit(amount, password = '')
+    if valid_password(password)
+      @balance += amount
+    else
+      puts 'Invalid password'
+    end
+  end
+
+  def withdrawal(amount, password = '')
+    if valid_password(password)
+      if valid_withdrawal(amount)
+        @balance -= amount
+      else
+        puts 'Invalid withdrawal amount'
+      end
+    else
+      puts 'Invalid password'
+    end
+  end
+
+  def balance(password = '')
+    if valid_password(password)
+      puts format('$%.2f', @balance)
+    else
+      puts 'Invalid password'
+    end
+  end
+
+  def >(other)
+    password > other.password
+  end
 
   protected
 
+  attr_reader :password
 
   private
 
+  attr_writer :balance
 
+  def valid_withdrawal(amount)
+    @balance > amount
+  end
+
+  def valid_password(password)
+    @password == password
+  end
 end
 
+cheque = BankAccount.new('Cheque', '123')
+cheque.balance('456')
+# Invalid password
+cheque.balance('123')
+# $0.00
+cheque.deposit(500, '456')
+# Invalid password
+cheque.deposit(500, '123')
+cheque.balance('123')
+# $500.00
+cheque.withdrawal(1000, '123')
+# Invalid withdrawal amount
+cheque.withdrawal(250, '123')
+cheque.balance('123')
+# $250.00
 
-
+savings = BankAccount.new('Savings', '456')
+savings.deposit(10_000, '456')
+savings.balance('456')
+# $10000.00
+puts savings > cheque
+# true
 
 # ----------------------------------
 # Inheritance
@@ -205,20 +268,58 @@ end
 # Interface Inheritance
 # ----------------------------------
 
+class ParentClass1
+  def swim
+    "I'm swimming"
+  end
+end
 
+class ChildClass1 < ParentClass1
+end
+
+puts ChildClass1.new.swim
+# I'm swimming
+
+module Walkable
+  def walk
+    "I'm walking"
+  end
+end
+
+class Human
+  include Walkable
+end
+
+puts Human.new.walk
+# I'm walking
 
 # ----------------------------------
 # Method Lookup Path
 # ----------------------------------
 
+module Swimmable
 
+end
 
+module Climbable
+end
+
+class ParentClass2
+  include Swimmable
+end
+
+class ChildClass2 < ParentClass2
+  include Climbable
+end
+
+p ChildClass2.ancestors
+# [ChildClass2, Climbable, ParentClass2, Swimmable, Object, Kernel, BasicObject]
 
 # ----------------------------------
 # Super passing all arguments
 # ----------------------------------
 
-class ParentClass
+class ParentClass3
   attr_reader :name
 
   def initialize(name)
@@ -226,13 +327,13 @@ class ParentClass
   end
 end
 
-class ChildClass < ParentClass
+class ChildClass3 < ParentClass3
   def initialize(name)
     super
   end
 end
 
-example15 = ChildClass.new('Example 15')
+example15 = ChildClass3.new('Example 15')
 puts example15.name
 # Example 15
 
@@ -240,7 +341,7 @@ puts example15.name
 # Passing super an argument
 # ----------------------------------
 
-class ParentClass
+class ParentClass4
   attr_reader :name
 
   def initialize(name)
@@ -248,7 +349,7 @@ class ParentClass
   end
 end
 
-class ChildClass < ParentClass
+class ChildClass4 < ParentClass4
   attr_reader :age
 
   def initialize(name, age)
@@ -257,7 +358,7 @@ class ChildClass < ParentClass
   end
 end
 
-example16 = ChildClass.new('Example 16', 30)
+example16 = ChildClass4.new('Example 16', 30)
 puts example16.name
 # Example 16
 puts example16.age
@@ -267,7 +368,7 @@ puts example16.age
 # No Argument
 # ----------------------------------
 
-class ParentClass
+class ParentClass5
   @@count = 0
 
   def initialize
@@ -279,17 +380,17 @@ class ParentClass
   end
 end
 
-class ChildClass < ParentClass
+class ChildClass5 < ParentClass5
   def initialize(name)
     super()
     @name = name
   end
 end
 
-puts ParentClass.count
+puts ParentClass5.count
 # 0
-example17 = ChildClass.new('Example 17')
-puts ParentClass.count
+example17 = ChildClass5.new('Example 17')
+puts ParentClass5.count
 # 1
 
 # ----------------------------------
@@ -298,23 +399,42 @@ puts ParentClass.count
 # Instance Variables with inheritance
 # ----------------------------------
 
+class ParentClass6
+  attr_accessor :name
 
+  def initialize(name)
+    @name = name
+  end
+end
 
+class ChildClass6 < ParentClass6
+end
 
+child_class_6 = ChildClass6.new('James')
+puts child_class_6.name
+# James
 
 # ----------------------------------
 # Class variables with inheritance
 # ----------------------------------
 
+class ParentClass7
+  @@count = 0
 
+  def self.count
+    @@count
+  end
+end
 
+class ChildClass7 < ParentClass7
+end
 
+puts ChildClass7.count
+# 0
 
 # ----------------------------------
 # Polymorphism & Encapsulation
 # ----------------------------------
-
-
 
 # ----------------------------------
 # Polymorphism
@@ -361,9 +481,21 @@ puts ParentClass.count
 # Namespacing
 # ----------------------------------
 
+module NameSpace
+  module Walkable2
+    def walk
+      "I'm walking"
+    end
+  end
 
+  class Example20
+    include Walkable2
+  end
+end
 
-
+example20 = NameSpace::Example20.new
+puts example20.walk
+# I'm walking
 
 # ----------------------------------
 # Self
@@ -393,14 +525,9 @@ puts ParentClass.count
 # Fake Operators and Equality
 # ----------------------------------
 
-
-
-
 # ----------------------------------
 # Equivalence
 # ----------------------------------
-
-
 
 # ----------------------------------
 # ==
@@ -422,16 +549,15 @@ puts ParentClass.count
 
 
 
+# ----------------------------------
 # eql?
-
+# ----------------------------------
 
 
 
 # ----------------------------------
 # Fake Operators
 # ----------------------------------
-
-
 
 # ----------------------------------
 # Comparison Methods
