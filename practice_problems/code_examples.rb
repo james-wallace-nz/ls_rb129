@@ -440,33 +440,163 @@ puts ChildClass7.count
 # Polymorphism
 # ----------------------------------
 
+class Car
+  def move
+    "I'm driving"
+  end
+end
 
+class Plane
+  def move
+    "I'm flying"
+  end
+end
 
+car = Car.new
+puts car.move
+# I'm driving
 
+plane = Plane.new
+puts plane.move
+# I'm flying
 
 # ----------------------------------
 # Polymorphism Through Inheritance
 # ----------------------------------
 
+class Mammal
+  def dive
+    "I'm diving for minutes"
+  end
+end
 
+class HumanBeing2 < Mammal
+end
 
+class Whale2 < Mammal
+  def dive
+    "I'm diving for hours"
+  end
+end
 
+james = HumanBeing2.new
+puts james.dive
+# I'm diving for minutes
+
+neemo = Whale2.new
+puts neemo.dive
+# I'm diving for hours
 
 # ----------------------------------
 # Polymorphism Through Duck Typing
 # ----------------------------------
 
+class Restaurant
+  attr_accessor :name, :staff, :guests, :meals
 
+  def initialize(name)
+    @name = name
+    @staff = []
+    @guests = []
+    @meals = []
+  end
 
+  def add_staff(staff_member)
+    staff << staff_member
+  end
+
+  def add_guests(guest)
+    guests << guest
+  end
+
+  def add_meal(meal)
+    meals << meal
+  end
+
+  def serve_guests
+    staff.each do |staff_member|
+      staff_member.work(self)
+    end
+  end
+end
+
+class Chef
+  def work(restaurant)
+    cook(restaurant.meals)
+  end
+
+  def cook(meals)
+    puts "I'm cooking #{meals.join(', ')}."
+  end
+end
+
+class Waiter
+  def work(restaurant)
+    serve(restaurant.guests)
+  end
+
+  def serve(guests)
+    puts "I'm serving #{guests.join(', ')}."
+  end
+end
+
+restaurant = Restaurant.new('Mamma Rosa')
+chef = Chef.new
+waiter = Waiter.new
+guest = 'James'
+meal = 'steak'
+
+restaurant.add_staff(chef)
+restaurant.add_staff(waiter)
+restaurant.add_guests(guest)
+restaurant.add_meal(meal)
+restaurant.serve_guests
+# I'm cooking steak.
+# I'm serving James.
 
 
 # ----------------------------------
 # Encapsulation
 # ----------------------------------
 
+class BankAccount2
+  attr_accessor :name
+  attr_reader :balance
 
+  def initialize(name)
+    @name = name
+    @balance = 0
+  end
 
+  def deposit(amount)
+    self.balance += amount
+  end
 
+  def withdraw(amount)
+    self.balance -= amount if amount <= balance
+  end
+
+  private
+
+  attr_writer :balance
+end
+
+cheque = BankAccount2.new('Cheque')
+puts cheque.balance
+# 0
+
+# puts cheque.balance = 100
+# NoMethodError: private method 'balance' called for #<BankAccount2...>
+
+cheque.deposit(100)
+puts cheque.balance
+# 100
+cheque.withdraw(200)
+puts cheque.balance
+# 100
+cheque.withdraw(50)
+puts cheque.balance
+# 50
 
 # ----------------------------------
 # Modules
@@ -474,8 +604,27 @@ puts ChildClass7.count
 # Module Methods
 # ----------------------------------
 
+module Jumpable
+  def jump
+    "I'm jumping"
+  end
+end
 
+class Human3
+  include Jumpable
+end
 
+class Spider
+  include Jumpable
+end
+
+steph = Human3.new
+puts steph.jump
+# I'm jumping
+
+incy = Spider.new
+puts incy.jump
+# I'm jumping
 
 # ----------------------------------
 # Namespacing

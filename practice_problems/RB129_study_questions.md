@@ -306,38 +306,127 @@ puts sparky.info
 # => Sparky weighs 10 lbs and is 12 inches tall.
 ```
 
-    Inside the instance method definition for `change_info`, local variables, `name`, `height`, and `weight` are initialized and assigned the values of `n`, `h`, and `w`, respectively. `change_info` does not reassign the instance variables `@name`, `@height`, and `@weight`, so `puts sparky.info` is unchanged by `sparky.change_info('Spartacus', '24 inches', '45 lbs')`. 
+   Inside the instance method definition for `change_info`, local variables, `name`, `height`, and `weight` are initialized and assigned the values of `n`, `h`, and `w`, respectively. `change_info` does not reassign the instance variables `@name`, `@height`, and `@weight`, so `puts sparky.info` is unchanged by `sparky.change_info('Spartacus', '24 inches', '45 lbs')`. 
 
-    To fix this we need to add `self.` in front of `name`, `height`, and `weight` inside `change_info`, or refer to the instance variables directly with `@` in front of `name`, `height`, and `weight`.
+  To fix this we need to add `self.` in front of `name`, `height`, and `weight` inside `change_info`, or refer to the instance variables directly with `@` in front of `name`, `height`, and `weight`.
 
 
-33. When would you call a method with `self`?
+33. When would you call a method with `self`
 
-    
+    You would call a method with `self` inside an instance method definition when you are calling a setter method provided by `attr_accessor` or `attr_writer` and passing in a new value to assign to the instance variable. 
 
+    If you don't call the setter method with `self` prefixed, or reassign the instance variable directly, Ruby will assume that a local variable with the same name is being initialized and assigned the value. This won't update the instance variable as intended, and the local variable will be inaccessible once the method finishes executing and returns. 
+
+    ``` Ruby
+    class Example
+      attr_accessor :name
+
+      def initialize(name)
+        @name = name
+      end
+
+      def change_name(new_name)
+        # name = new_name       # will initialize a local variable
+        self.name = new_name    # calls the `name=` setter method and reassigns `@name` to `new_name`
+      end
+    end
+    ```
 
 34. What are class methods? Provide an example.
+
+    Class methods are methods that are invoked on the class itself.
+
+    ``` ruby
+    class ExampleClass
+      @@count = 0
+
+      def initialize
+        @@count += 1
+      end
+
+      #class method
+      def self.count
+        @@count
+      end
+    end
+    puts ExampleClass.count
+    # 0
+    ```
 
 
 35. What are class variables and is their purpose? Provide an example.
 
+    Class variables are variables that are scoped to the class itself and available to all instance of the class and sub-classes. 
+
+    ``` ruby
+    class ExampleClass
+      @@count = 0
+
+      def initialize
+        @@count += 1
+      end
+
+      def self.count
+        @@count
+      end
+    end
+    puts ExampleClass.count
+    # 0
+    example = ExampleClass.new
+    puts ExampleClass.count
+    # 1
+    ```
+
 
 36. What is a constant variable? Provide an example.
+
+    A constant variable is a variable that has lexical scope and a fixed value assigned to it. 
+
+    ``` ruby
+    class TwentyOneGame
+      MAX_VALUE = 21
+
+    end
+    ```
 
 
 37. What is the default `to_s` method that comes with Ruby, and how do you override this?
 
+    The default `to_s` method that comes with Ruby is defined in the `Object` class. We can override this with our own implementation of `to_s` in custom class definitions. 
+
 
 38. What are some important attributes of the `to_s` method?
+
+    The `to_s` method is invoked automatically on objects passed into the `puts` method as arguments. 
+
+    By default, the `to_s` method will return a string representation of an object, unless overridden by a custom implementation. 
 
 
 39. From within a class, when an instance method uses `self`, what does it reference?
 
+    Inside a class, when an instance method uses `self`, it refers to the object that the instance method was invoked on. 
+
 
 40. What happens when you use `self` inside a class but outside of an instance method?
 
+    Using `self` inside a class definition but outside of an instance method will refer to the class itself. This is most commonly used to define a class method:
+
+    ``` ruby
+    class Example
+      def self.class_method
+        puts self
+      end
+    end
+
+    Example.class_method
+    # Example
+    ````
+
 
 41. Why do you need to use `self` when calling private setter methods?
+
+
+
 
 
 42. Why use `self`, and how does `self` change depending on the scope it is used in?
@@ -442,8 +531,18 @@ daisy = Cow.new("Daisy")
 daisy.speak
 ```
 
+  The code outputs `Daisy says moooooooooooo!`
+  
+  A new instance of the `Cow` class is instantiated and assigned to the local variable `daisy`. A String object, `Daisy`, is passed into `new` as an argument. The `Cow` class has no `initialize` method defined but inherits from the `Animal` class. `'Daisy'` is passed into `Animal#initialize` as an argument and assigned to the `@name` instance variable. 
+  
+  The `speak` instance method is invoked on the `Cow` object assigned to `daisy`. The `Cow` class doesn't define a `speak` method, so the `Animal#speak` method is invoked as it is the first method with the same name in the method lookup path.
+  
+  The `speak` method calls the `sound` instance method on the `Cow` object. The `Cow#sound` method first invokes `super`, which invokes the parent class method with the same name. `Animal#sound` interpolates the value assigned to the `@name` instance variable into a String object and returns it. 
+  
+  `Cow#sound` concatenates the return value from `Animal#sound` to a `String` object `moooooooooooo!` and returns it to `Animal#speak`. This return value is passed to the `puts` method as an argument and output, with a `nil` return value.
 
-68.  
+
+68. What code snippet can replace the "omitted code" comment to produce the indicated result?
 
 ``` ruby
 class Person
@@ -460,10 +559,10 @@ mike.last_name = 'Garcia'
 mike.full_name # => 'Michael Garcia'
 ```
 
-What code snippet can replace the "omitted code" comment to produce the indicated result?
+  We can replace the comment with `"#{first_name} #{last_name}"` to produce the intended result.
 
 
-69. 
+69. The last line in the below code should return "A". Which method(s) can we add to the Student class so the code works as expected? 
 
 ``` ruby
 class Student
@@ -480,7 +579,13 @@ priya.change_grade('A')
 priya.grade # => "A"
 ```
 
-The last line in the above code should return "A". Which method(s) can we add to the Student class so the code works as expected? 
+  We can add a `change_grade` instance method that accepts a new grade as an argument: 
+
+  ``` ruby
+  def change_grade(new_grade)
+    self.grade = new_grade
+  end
+  ```
 
 
 70. In the example above, why would the following not work?
@@ -490,6 +595,8 @@ def change_grade(new_grade)
   grade = new_grade
 end
 ```
+
+    If we don't reassign the `@grade` instance variable directly, or pre-fix `grade` with `self`, then Ruby will assume that we are initializing a local variable and assigning the `new_grade` to it.
 
 
 71. On which lines in the following code does self refer to the instance of the `MeMyselfAndI` class referenced by `i` rather than the class itself? Select all that apply:
@@ -509,6 +616,8 @@ end
 
 i = MeMyselfAndI.new
 ```
+
+
 
 
 72. Given the below usage of the Person class, code the class definition.
