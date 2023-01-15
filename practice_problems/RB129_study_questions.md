@@ -141,7 +141,8 @@
 
 18. When defining a class, we usually focus on state and behaviors. What is the difference between these two concepts?
 
-
+    
+    
 
 19. How do you initialize a new object?
 
@@ -936,10 +937,13 @@ bob.get_name      # => ??
     When `bob` is initialized to a new instance of the `Person` class on the second to last line, there is no `initialize` method in the `Person` class, and no `@name` instance variable is initialized. When the `get_name` instance method is invoked on the last line it references the @name instance variable. Since this hasn't been initialized, it has no value and will return `nil`. **[update]**
 
 
-99. What are the scoping rules for class variables? What are the two main  behaviors of class variables?
+99. What are the scoping rules for class variables? What are the two main behaviors of class variables?
 
     Class variables are scoped at the class level. **[update]**
 
+    Class variables are availble to all instances of a class.
+
+    Defining a sub-class with the same class variable will override the value assigned to a parent class class variable.
 
 
 100. What are the scoping rules for constant variables?
@@ -1116,7 +1120,8 @@ a_car.change_tires
 
 111. What is lexical scope?
 
-    Lexical scope is... **[update]**
+    Lexical scope means that Ruby first looks for the constant in the context of where it is invoked. If it doesn't find a constant with that name in that scope it will use the method lookup path. 
+    **[update]**
 
 
 112. When dealing with code that has modules and inheritance, where does constant resolution look first?
@@ -1204,38 +1209,78 @@ dream_team = cowboys + niners               # what is dream_team?
 
 What does the `Team#+`` method currently return? What is the problem with this? 
 
+    `Team#+` currently returns a new `Array` object. The expected behaviour of a default Ruby class is that it will return an new instance of the same class. Therefore, our custom `Team` class `+` method should return a new instance of the `Team` class.
 
 
 How could you fix this problem?
 
+    We can fix this by first instantiating a new instance of the `Team` class with a temporary name. Then we add the members of the instance that `+` was invoked on and then the members of the other team passed in as an argument to `+`:
 
+   ``` ruby
+   def +(other_team)
+     new_team = Team.new('temp')
+     new_team << members
+     new_team << other_team.members
+     new_team 
+   end
+   ```
 
 
 117. Explain how the element getter (reference) and setter methods work, and their corresponding syntactical sugar.
 
     `[]` and `[]=` **[update]**
 
+    The element getter method defined as `def [](index); end` has syntactic sugar allowing us to invoke it as `object[index]`. 
+
+    The element setter method defined as `def [](index, element); end` has syntactic sugar allowing us to invoke it as `object[index] = element`. 
+
 
 118. How is defining a class different from defining a method?
 
+    We define a class with `class` then a CamelCase name. 
+
+    We define a method with `def` then a snake_case` name. 
+
+    Both end the definition with `end` keyword.
 
 
 119. How do you create an instance of a class? 
 
-    We create an instance of a class by calling `new` on the class. E.g. `Class.new`. **[update]**
+    We create an instance of a class by calling `new` on the class. E.g. `ClassName.new`. **[update]**
 
 
 120. What are two different ways that the getter method allows us to invoke the method in order to access an instance variable?
 
+    We can invoke the getter method on the object using dot notation: `object.getter_method`
 
+    We can invoked the getter method inside the class definition with an implicit recevier, being the instance that invoked another method:
+
+    ``` ruby
+      def formatted_name
+        'Sir ' + name
+      end
+    ```
+
+    We can also invoke the getter method inside the class definition with an explicit receiver, `self`, although this isn't required. 
+
+    ``` ruby
+      def formatted_name
+        'Sir ' + self.name
+      end
+    ```
 
 
 121. When you have a mixin and you use a ruby shorthand accessor method, how do you write the code (what order do you write the getter/setters and the mixin)? 
 
+    We have to write the getter method as `self.getter_method` so that that the method is invoked on the instance that invoked the module's instance method. Otherwise, Ruby will search for the method to invoke in the module and won't find it becuase the method is defined in the class. 
+
+    We have to `include` the mixin module before we invoke `attr_reader`, `attr_writer` or `attr_accessor` in the class definition
+
     **[update]**
 
-
     What about using a constant? 
+
+    To reference a constant defined in the class through an instance method defined in an mixin module, we need to use the class name as a prefix with the namespace resolution operator. The method requires this to search in the correct place for the constant. Otherwise, Ruby will use lexical scope and search for the constant in the module, where the module is defined.
 
     **[update]**
 
@@ -1368,7 +1413,17 @@ puts truck1.start_engine('fast')
 
 135. What is namespacing, and how do you instantiate a class contained in a module?
 
-    
+    Namespacing is using a module to encapsulate code that we want to keep separate from other parts of the code base. We do this to avoid name conflicts with other classes and methods. 
+
+    We instantiate a class contained in a namespace module by prefixing the class name with the module name and the namespace resolution operator:
+
+    ``` ruby
+    module NameSpaceModule
+      class NameSpaceClass; end
+    end
+
+    test = NameSpaceModule::NameSpaceClass.new
+    ```
 
 
 136. When using getters and setters, in what scenario might you decide to only use a getter, and why is this important?
@@ -1378,26 +1433,70 @@ puts truck1.start_engine('fast')
 
 137. How do we create an object in Ruby? Give an example of the creation of an object.
 
+    We create an object in Ruby by invoking the `new` method on the class name of the class we want an object instance of. 
+
+    ``` ruby
+    class Example
+
+    end
+
+    new_object = Example.new
+    ```
+
 
 138. What's the difference between instance and class variables?
+
+    Instance variables are scoped to individual instances and are only available to that instance. 
+
+    Class variables are scoped to the class and are available to all instances of that class.
 
 
 139. What's the difference between instance and class methods?
 
+    Instance methods are invoked on an object instance of a class. 
 
-140. Why do custom classes usually define a to_s method?
+    Class methods are invoked on the class itself. 
+
+
+140. Why do custom classes usually define a `to_s` method?
+
+    The `puts` method and string interpolation automatically call `to_s` on an object. By default, an object of a custom class will return a string representation of the object. E.g. `#<ExampleClass: ... name='test'>`
+
+    We usually define a `to_s` method for the class to return a string representation in a format that makes sense, e.g. the object's name, instead of the default representation. 
 
 
 141. When are Modules used? What is interface inheritance? What is multiple inheritance?
 
+    Modules are used for namespacing and interface inheritance. 
+
+    Namespacing is encapsulating our code in a module to keep it separate from other parts of our code base and avoid name conflicts. 
+
+    Mixin modules define instance variables and instance methods. We can mixin these modules to specific classes to provide the instance variables and methods (interface inheritance) to that class and child classes of that class.
+
+    Multiple inheritance is where a class inherits from multiple parent classes. Ruby doesn't allow for multiple inheritance and a class can only inherit from one parent class. We can achieve multiple inheritance in Ruby through the use of mixin modules. 
+
 
 142. What is method access control?
+
+    Method access control is the use of the `public`, `private` and `protected` methods in a class definition to control access to instance methods defined in the class. 
+
+    Instance methods defined below `public` are available to be called outside of the class.
+
+    Instance methods defined below `private` can only be invoked inside the class definition. They cannot be invoked on an object of the class outside of the class. 
+
+    Instance methods defined below `protected` are available to be called with an explici receiver inside the same class. These methods cannot be invoked outside of the class. 
+
+    **[update]**
 
 
 143. How are encapsulation and method access control related?
 
 
+
+
 144. What are the differences between public, private, and protected methods?
+
+    
 
 
 145. What are collaborator objects? Why are they important in OOP?
